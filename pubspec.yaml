@@ -1,7 +1,7 @@
 name: todo_demo_app
 description: "A new Flutter project."
 publish_to: 'none'
-version: 0.1.0
+version: 1.0.0+2024082900
 
 environment:
   sdk: '>=3.4.3 <4.0.0'
