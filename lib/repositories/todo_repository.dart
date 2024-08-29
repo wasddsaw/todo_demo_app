@@ -15,4 +15,14 @@ class TodoRepository {
     final result = response.docs.map((doc) => Todo.fromSnapshot(doc)).toList();
     return result;
   }
+
+  Future<void> updateTodo(Todo data) async {
+    final CollectionReference<Map<String, dynamic>> todoCollection = db.collection('todos');
+    await todoCollection.doc(data.id).update(data.toMap());
+  }
+
+  Future<void> deleteTodo(Todo data) async {
+    final CollectionReference<Map<String, dynamic>> todoCollection = db.collection('todos');
+    await todoCollection.doc(data.id).delete();
+  }
 }

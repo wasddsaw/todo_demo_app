@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:jiffy/jiffy.dart';
+import 'package:todo_demo_app/models/todo.dart';
 import 'package:todo_demo_app/repositories/todo_repository.dart';
 import 'package:todo_demo_app/utils/app_color.dart';
 import 'package:todo_demo_app/widgets/custom_card.dart';
@@ -41,19 +43,40 @@ class _HomeScreenState extends State<HomeScreen> {
               itemBuilder: (context, index) {
                 final data = snapshot.data?[index];
 
+                var id = data?.id ?? '';
                 var title = data?.title ?? '';
                 var startDate = data?.startDate ?? '';
                 var endDate = data?.endDate ?? '';
                 var status = data?.status ?? '';
 
-                //DateTime.parse(Jiffy.parse(startDate).format(pattern: 'dd MMM yyyy, h:mm a'));
+                return GestureDetector(
+                  onTap: status == 'Incomplete'
+                      ? () {
+                          Navigator.pushNamed(context, '/edit', arguments: data).then((_) {
+                            setState(() {});
+                          });
+                        }
+                      : null,
+                  child: CustomCard(
+                    title: title,
+                    startDate: Jiffy.parse(startDate, pattern: 'dd MMM yyyy, h:mm a').format(pattern: 'dd MMM yyyy'),
+                    endDate: Jiffy.parse(endDate, pattern: 'dd MMM yyyy, h:mm a').format(pattern: 'dd MMM yyyy'),
+                    status: status,
+                    isCompleted: status == 'Incomplete' ? false : true,
+                    onValueChanged: (val) {
+                      final data = Todo(
+                        id: id,
+                        title: title,
+                        startDate: startDate,
+                        endDate: endDate,
+                        status: !val ? 'Incomplete' : 'Completed',
+                      );
 
-                return CustomCard(
-                  title: title,
-                  startDate: startDate,
-                  endDate: endDate,
-                  status: status,
-                  onValueChanged: (val) {},
+                      todoRepo.updateTodo(data).then((_) {
+                        setState(() {});
+                      });
+                    },
+                  ),
                 );
               },
             );
